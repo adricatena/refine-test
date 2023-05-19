@@ -16,6 +16,7 @@ import routerBindings, {
 } from "@refinedev/react-router-v6";
 import dataProvider from "@refinedev/simple-rest";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { MantineInferencer } from "@refinedev/inferencer/mantine";
 
 function App() {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -51,9 +52,24 @@ function App() {
                   syncWithLocation: true,
                   warnWhenUnsavedChanges: true,
                 }}
+                resources={[
+                  {
+                    name: "blog_posts",
+                    list: "/blog-posts",
+                    show: "/blog-posts/show/:id",
+                    create: "/blog-posts/create",
+                    edit: "/blog-posts/edit/:id",
+                  },
+                ]}
               >
                 <Routes>
                   <Route index element={<WelcomePage />} />
+                  <Route path="blog-posts">
+                    <Route index element={<MantineInferencer />} />
+                    <Route path="show/:id" element={<MantineInferencer />} />
+                    <Route path="edit/:id" element={<MantineInferencer />} />
+                    <Route path="create" element={<MantineInferencer />} />
+                  </Route>
                 </Routes>
                 <RefineKbar />
                 <UnsavedChangesNotifier />
