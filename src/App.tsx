@@ -1,7 +1,11 @@
 import { GitHubBanner, Refine, WelcomePage } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
-import { notificationProvider, RefineThemes } from "@refinedev/mantine";
+import {
+  AuthPage,
+  notificationProvider,
+  RefineThemes,
+} from "@refinedev/mantine";
 
 import {
   ColorScheme,
@@ -14,9 +18,15 @@ import { NotificationsProvider } from "@mantine/notifications";
 import routerBindings, {
   UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
-import dataProvider from "@refinedev/simple-rest";
+// import dataProvider from "@refinedev/simple-rest";
+import { dataProvider } from "./rest-data-provider";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { MantineInferencer } from "@refinedev/inferencer/mantine";
+// import { MantineInferencer } from "@refinedev/inferencer/mantine";
+import { BlogPostList } from "pages/blog-posts/list";
+import { BlogPostEdit } from "pages/blog-posts/edit";
+import { BlogPostShow } from "pages/blog-posts/show";
+import { BlogPostCreate } from "pages/blog-posts/create";
+import authProvider from "authProvider";
 
 function App() {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -45,6 +55,7 @@ function App() {
             <Global styles={{ body: { WebkitFontSmoothing: "auto" } }} />
             <NotificationsProvider position="top-right">
               <Refine
+                authProvider={authProvider}
                 notificationProvider={notificationProvider}
                 routerProvider={routerBindings}
                 dataProvider={dataProvider("https://api.fake-rest.refine.dev")}
@@ -59,17 +70,33 @@ function App() {
                     show: "/blog-posts/show/:id",
                     create: "/blog-posts/create",
                     edit: "/blog-posts/edit/:id",
+                    meta: {
+                      canDelete: true,
+                    },
                   },
                 ]}
               >
                 <Routes>
                   <Route index element={<WelcomePage />} />
                   <Route path="blog-posts">
-                    <Route index element={<MantineInferencer />} />
-                    <Route path="show/:id" element={<MantineInferencer />} />
-                    <Route path="edit/:id" element={<MantineInferencer />} />
-                    <Route path="create" element={<MantineInferencer />} />
+                    <Route index element={<BlogPostList />} />
+                    <Route path="show/:id" element={<BlogPostShow />} />
+                    <Route path="edit/:id" element={<BlogPostEdit />} />
+                    <Route path="create" element={<BlogPostCreate />} />
                   </Route>
+                  <Route path="/login" element={<AuthPage type="login" />} />
+                  <Route
+                    path="/register"
+                    element={<AuthPage type="register" />}
+                  />
+                  <Route
+                    path="/forgot-password"
+                    element={<AuthPage type="forgotPassword" />}
+                  />
+                  <Route
+                    path="/update-password"
+                    element={<AuthPage type="updatePassword" />}
+                  />
                 </Routes>
                 <RefineKbar />
                 <UnsavedChangesNotifier />
